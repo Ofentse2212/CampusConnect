@@ -1,0 +1,87 @@
+@property --left-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --right-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@keyframes scrollfade {
+  0% {
+    --left-fade: 0;
+  }
+  10%, 100% {
+    --left-fade: 12rem;
+  }
+  0%, 90% {
+    --right-fade: 12rem;
+  }
+  100% {
+    --right-fade: 0;
+  }
+}
+
+.scrollable {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  /* Keep the scrollbar visible with a two-layer mask */
+  --scrollbar-width: 6px;
+
+  /* Fade the content area only */
+  --mask-image-content: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--left-fade),
+    black calc(100% - var(--right-fade)),
+    transparent
+  );
+  --mask-size-content: calc(100% - var(--scrollbar-width)) 100%;
+
+  /* Solid mask where the scrollbar sits */
+  --mask-image-scrollbar: linear-gradient(black, black);
+  --mask-size-scrollbar: var(--scrollbar-width) 100%;
+
+  mask-image: var(--mask-image-content), var(--mask-image-scrollbar);
+  mask-size: var(--mask-size-content), var(--mask-size-scrollbar);
+  mask-position: 0 0, 100% 0;
+  mask-repeat: no-repeat, no-repeat;
+
+  /* Safari/WebKit support */
+  -webkit-mask-image: var(--mask-image-content), var(--mask-image-scrollbar);
+  -webkit-mask-size: var(--mask-size-content), var(--mask-size-scrollbar);
+  -webkit-mask-position: 0 0, 100% 0;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  
+  /* Firefox scrollbar sizing/colors */
+  scrollbar-width: thin;
+  scrollbar-color: currentColor transparent;
+  animation: scrollfade;
+  animation-timeline: --scrollfade;
+  scroll-timeline: --scrollfade y;
+  
+  /* Adding scrollsnapping */
+  scroll-snap-type: x mandatory;
+  padding: 0 25%;
+  
+}
+
+/* Webkit / Blink for .scrollable */
+.scrollable::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: currentColor;
+  border-radius: 9999px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: transparent;
+}
